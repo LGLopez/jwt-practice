@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt');
+const jwtGenerator = require('../utils/jwtGenerator');
 
 // Registering
 router.post('/register', async (req, res) => {
@@ -24,9 +25,10 @@ router.post('/register', async (req, res) => {
         // add new user to db
         const newUser = await pool.query(`INSERT INTO users(user_name, user_email, user_password) VALUES('${name}', '${email}', '${bcryptPassword}') RETURNING *`);
 
-        res.json(newUser.rows[0]);
         // generate the JWT token
-
+        const token = jwtGenerator(newUser.rows[0].user_id);
+        
+        res.json({token});
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
