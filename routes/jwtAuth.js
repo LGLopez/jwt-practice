@@ -2,9 +2,10 @@ const router = require('express').Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt');
 const jwtGenerator = require('../utils/jwtGenerator');
+const validInfo = require('../middleware/validInfo');
 
 // Registering
-router.post('/register', async (req, res) => {
+router.post('/register', validInfo, async (req, res) => {
     try {
         // get everything from body
         const {name, email, password} = req.body;
@@ -13,7 +14,7 @@ router.post('/register', async (req, res) => {
         const user = await pool.query(`SELECT * FROM users WHERE user_email='${email}'`);
         
         if (user.rows.length !== 0)
-            return res.status(401).send("User already exists")  // 401 status means unathorized
+            return res.status(401).json("User already exists")  // 401 status means unathorized
         
 
         // bcrypt the password
@@ -31,12 +32,12 @@ router.post('/register', async (req, res) => {
         res.json({token});
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).json('Server error');
     }
 } )
 
 // Login route
-router.post('/login', async (req, res) => {
+router.post('/login', validInfo, async (req, res) => {
     try {
         // Destructure the request
         const {email, password} = req.body;
@@ -59,7 +60,7 @@ router.post('/login', async (req, res) => {
 
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).json('Server error');
     }
 })
 
