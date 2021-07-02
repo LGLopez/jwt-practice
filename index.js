@@ -13,6 +13,8 @@ const PORT = process.env.PORT || 3001;
 
 app.use('/auth', require('./routes/jwtAuth'));
 
+app.use('/dashboard', require('./routes/dashboard'));
+
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 })

@@ -11,11 +11,11 @@ module.exports = async (req, res, next) => {
             return res.status(403).json("Not authorize");
 
         // Check if the token is valid
-        const payload = jwt.verify(jwtToken, JWT_SECRET);
-
-        console.log(payload);
+        const payload = jwt.verify(jwtToken, process.env.JWT_SECRET);
 
         req.user = payload.user;
+
+        next();
     } catch (err) {
         console.error(err.message);
         res.status(403).json("Not authorize");
